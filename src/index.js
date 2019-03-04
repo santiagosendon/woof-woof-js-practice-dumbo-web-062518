@@ -1,45 +1,61 @@
-document.addEventListener('DOMContentLoaded',() => {
-const url = 'http://localhost:3000/pups'
+document.addEventListener('DOMContentLoaded', () =>{
 const dogBar = document.querySelector('#dog-bar')
-const dogInfo = document.querySelector('#dog-info')
+const baseUrl = 'http://localhost:3000/pups'
+const dogSummary = document.querySelector('#dog-summary-container')
+const dogInfoDiv = document.querySelector('#dog-info')
+fetchDogBar()
 
-fetchDogs()
-
-function fetchDogs(){
-  fetch(url)
+function fetchDogBar(){
+  fetch(baseUrl)
   .then(res => res.json())
   .then(renderDogBar)
 }
 
 function renderDogBar(dogs){
-  dogs.forEach( dog => addDogToDogBar(dog))
-
+  dogs.forEach(renderDogsOnBar)
 }
-
-function addDogToDogBar(dog){
-const span =  document.createElement('span')
-span.innerText = `${dog.name}`
-span.setAttribute("data-id", dog.id)
-span.addEventListener('click', displayDogs)
-dogBar.append(span)
+// create a span that render dog name on dog bar for each dog
+//make sure u set an attribute to the span as an ID to show individual dogs the set attribute takes in 2 arguments
+//although the dogs has Ids in the database the individual spans dont
+function renderDogsOnBar(dog){
+ const span = document.createElement("span")
+ span.setAttribute('data-id',dog.id)
+ span.innerText = `${dog.name}`
+ span.addEventListener('click', showDog)
+ dogBar.append(span)
 }
-
-function displayDogs(e){
-const dogId =  e.target.dataset.id
-fetch(`${url}/ ${dogId}`)
-.then(res => res.json())
-.then( dog => {
-  const goodorbad = dog.isGoodDog ? "Good Boy!" : "bad Dog!"
-  dogInfo.innerHTML = ` <img src=${dog.image}>
+//we need to fetch the dog id with the url to display the dogs
+//need to do res.json in the fetch because it is the response converted to json
+// console log the .then to make sure your grabbing one dog obeject
+function showDog(e){
+ const dogId = e.target.dataset.id
+ fetch(`${baseUrl}/${dogId}`)
+ .then(res => res.json())
+ .then(dog => {
+   const goodOrBad = dog.isGoodDog   ? "GoodBoy!": "BAD DOG!! wtf"
+   dogInfoDiv.innerHTML = `<img src= ${dog.image}>
  <h2>${dog.name}</h2>
- <button data-id=${dog.id}>${goodorbad}</button>`
- const button = dogInfo.querySelector('button')
- button.addEventListener('click',toggleDog)
-})
+ <button>${goodOrBad}</button>`
 
+ })
 }
- function toggleDog(e){
-   console.log('hi');
- }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 })
